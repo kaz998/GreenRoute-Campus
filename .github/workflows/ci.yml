@@ -25,4 +25,5 @@ jobs:
         run: python -m py_compile app/__init__.py app/config.py app/db.py app/services/*.py app/ml/*.py seed.py setup_ai.py
 
       - name: Run tests
+        working-directory: GreenRoute-Campus
         run: pytest -q
