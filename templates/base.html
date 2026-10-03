@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="theme-color" content="#0b1f17">
+  <meta name="description" content="GreenRoute Campus — data-aware sustainable mobility planner for campus commuters.">
+  <title>{{ title or 'GreenRoute Campus' }}</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+<nav>
+  <a class="brand" href="/"><span class="brandmark">↗</span><span>GreenRoute <small>Campus · v{{app_version}}</small></span></a>
+  <button id="navToggle" class="iconbtn nav-toggle" type="button" aria-label="Open navigation">☰</button>
+  <div class="navlinks" id="navlinks">
+    {% if current_user %}
+      <a href="/planner">Plan</a><a href="/dashboard">Impact</a><a href="/carpool">Carpool</a><a href="/smart">Smart</a><a href="/ai">AI Copilot</a><a href="/leaderboard">Leaderboard</a><a href="/challenges">Challenges</a>
+      {% if current_user.role=='admin' %}<a href="/admin">Admin</a>{% endif %}
+      <a class="profile-link" href="/profile">{{ current_user.name.split(' ')[0] }}</a><a href="/logout">Logout</a>
+      <button id="theme" class="iconbtn" type="button" title="Toggle dark mode">☾</button>
+    {% else %}
+      <a href="/assumptions">Assumptions</a><a class="btn primary" href="/login">Login</a>
+    {% endif %}
+  </div>
+</nav>
+<main>
+  {% with messages=get_flashed_messages(with_categories=true) %}{% for cat,msg in messages %}<div class="flash {{cat}}">{{msg}}</div>{% endfor %}{% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer><b>GreenRoute Campus</b> · BBDNITM Lucknow · Innovating for a Sustainable Tomorrow<br><span>Don't just build a model, build a solution.</span> · <a href="/static/GreenRoute_Campus_Presentation.pdf" target="_blank">project presentation</a> · <a href="/health">system status</a></footer>
+<script src="/static/js/app.js"></script>
+<script>
+(() => { const t=document.querySelector('#navToggle'), n=document.querySelector('#navlinks'); if(t&&n){t.onclick=()=>{n.classList.toggle('open');t.textContent=n.classList.contains('open')?'✕':'☰';};}})();
+</script>
+{% block scripts %}{% endblock %}
+</body></html>

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero pro-hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="live-dot"></span> BBDNITM · SMART CAMPUS MOBILITY</div>
+    <h1>Make every commute a <span>measurable decision.</span></h1>
+    <p class="hero-lead">GreenRoute turns one journey into a clear comparison of <b>time, cost, CO₂, active travel and campus impact</b> — then lets a real AI explain the trade-off in natural language.</p>
+    <div class="actions"><a class="btn primary xl" href="/planner">Plan a smarter trip →</a><a class="btn dark xl" href="/ai">Try the AI Copilot ✦</a><a class="btn soft xl" href="#how">See how it works</a></div>
+    <div class="hero-proof"><span>✓ OSRM + fallback</span><span>✓ Cloud AI + offline fallback</span><span>✓ Weather + AQI</span><span>✓ CSRF + rate limits</span></div>
+  </div>
+  <div class="hero-dashboard">
+    <div class="dash-bar"><span>GREENROUTE / CAMPUS PULSE</span><b><i></i> SYSTEM READY</b></div>
+    <div class="pulse-main"><div><small>SHARE OF ESTIMATED CAR BASELINE AVOIDED</small><strong>{{home_stats.avoided_pct}}%</strong><p>Calculated from the seeded trip ledger rather than a fixed demo score.</p></div><div class="pulse-orbit"><span>CO₂</span><b>↓</b></div></div>
+    <div class="pulse-grid">
+      <div><b>{{home_stats.trips}}</b><small>trips analyzed</small></div><div><b>{{home_stats.commuters}}</b><small>commuters</small></div><div><b>{{home_stats.saved|round(0)|int}} kg</b><small>CO₂ avoided</small></div>
+    </div>
+    <div class="live-row"><span class="weather-symbol">◌</span><div><b>{{weather.temp}}°C · AQI {{weather.aqi}}</b><small>{{weather.label}} · {{weather.rain}} mm rain · {{weather.wind}} km/h wind</small></div><a href="/planner">Use conditions →</a></div>
+    <div class="insight"><span>LIVE STACK</span><b>AI + routing + weather + SQLite</b><small>Each layer has a fallback so the exhibition flow remains usable when an external service is offline.</small></div>
+    <div class="status-grid">
+      {% for key,value in systems.items() %}<div class="status-card"><b><span class="status-dot"></span>{{key}}</b><small>{{value}}</small></div>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="sdg-hero-card" aria-label="Sustainable Development Goal alignment">
+  <div class="sdg-icon-wrap"><img src="/static/sdg11_un_icon.png" alt="United Nations Sustainable Development Goal 11: Sustainable Cities and Communities icon"></div>
+  <div class="sdg-copy">
+    <div class="section-kicker">PROJECT SDG ALIGNMENT</div>
+    <h2>Built around <span>SDG 11</span></h2>
+    <p><strong>SDG 11 — Sustainable Cities and Communities.</strong> GreenRoute focuses on sustainable campus mobility by helping users compare transportation choices, understand estimated travel impact, and make informed decisions.</p>
+    <div class="sdg-target"><b>Why SDG 11?</b><span>UN Target 11.2 specifically addresses safe, affordable, accessible and sustainable transport systems.</span></div>
+    <div class="sdg-actions"><a class="btn primary" href="/static/GreenRoute_Campus_Presentation.pdf" target="_blank">View project presentation ↗</a><span class="sdg-source">UN SDG icon used according to UN guidance · no UN endorsement implied.</span></div>
+  </div>
+  <div class="sdg-qr"><img src="/static/presentation_qr.png" alt="QR code for the GreenRoute project presentation"><b>Scan for the full project PDF</b><small>Local demo QR · opens the presentation through the Flask server</small></div>
+</section>
+
+<section class="mission" id="how">
+  <div class="section-kicker">THE PROBLEM → THE SOLUTION</div>
+  <div class="mission-grid">
+    <div><h2>Students know the destination. They usually don't know the <span>trade-off.</span></h2><p>GreenRoute makes hidden commute outcomes visible and gives the campus a feedback loop: plan → act → measure → learn.</p></div>
+    <div class="problem-list">
+      <div><b>01</b><span><strong>Invisible impact</strong><small>Cost, CO₂ and activity are rarely shown together.</small></span></div>
+      <div><b>02</b><span><strong>Fragmented choices</strong><small>Bus, metro, walking, cycling and carpooling are not compared in one place.</small></span></div>
+      <div><b>03</b><span><strong>No feedback loop</strong><small>Repeated choices become meaningful only when the ledger measures them.</small></span></div>
+      <div><b>04</b><span><strong>No campus evidence</strong><small>Administrators need patterns that can be inspected and exported.</small></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="section-heading"><div><div class="section-kicker">ONE PLATFORM · FIVE JOBS</div><h2>Everything useful, nothing decorative.</h2></div><p>Every module answers a real question a commuter or campus team could ask.</p></div>
+  <div class="solution-grid">
+    <article class="solution-card large"><span class="number">01</span><div class="solution-icon">↗</div><h3>Smart Trip Planner</h3><p>Search or click a route, draw the road path and compare every available mode with consistent server-side calculations.</p><div class="mini-tags"><span>Leaflet</span><span>OSRM</span><span>OpenStreetMap</span></div><a href="/planner">Open planner →</a></article>
+    <article class="solution-card"><span class="number">02</span><div class="solution-icon">◎</div><h3>Impact Ledger</h3><p>Log the mode you actually took and build a personal record of CO₂ avoided, money saved and activity.</p><a href="/demo">See impact →</a></article>
+    <article class="solution-card"><span class="number">03</span><div class="solution-icon">✦</div><h3>Real AI Copilot</h3><p>Natural-language requests go to cloud AI when configured. GreenRoute keeps the candidate metrics authoritative and falls back offline.</p><a href="/ai">Ask the AI →</a></article>
+    <article class="solution-card"><span class="number">04</span><div class="solution-icon">⇄</div><h3>Carpool Network</h3><p>Turn repeated corridors into shareable rides with driver/rider posts, capacity and request flow.</p><a href="/carpool">Find a match →</a></article>
+    <article class="solution-card"><span class="number">05</span><div class="solution-icon">▦</div><h3>Campus Command Center</h3><p>Use seeded demonstration data to show route patterns, mode split, departments, rewards and exportable evidence.</p><a href="/login">Explore dashboard →</a></article>
+  </div>
+</section>
+
+<section class="flow-section">
+  <div class="section-heading"><div><div class="section-kicker">THE GREENROUTE LOOP</div><h2>Plan → Act → Learn → Improve.</h2></div><p>The value increases because a trip isn't just an answer; it becomes data for the next layer.</p></div>
+  <div class="flow-line">
+    <div><span>01</span><strong>PLAN</strong><p>Route + modes + conditions.</p></div><i>→</i><div><span>02</span><strong>ACT</strong><p>Choose and log the trip.</p></div><i>→</i><div><span>03</span><strong>REWARD</strong><p>Points, streaks and challenges.</p></div><i>→</i><div><span>04</span><strong>LEARN</strong><p>History trains the recommender.</p></div><i>→</i><div><span>05</span><strong>IMPROVE</strong><p>Campus sees patterns.</p></div>
+  </div>
+</section>
+
+<section class="ai-feature">
+  <div class="ai-feature-copy"><div class="section-kicker">AI, BUT USEFUL</div><h2>Real reasoning without letting the model invent your metrics.</h2><p>GreenRoute calculates the candidate modes first. The cloud AI receives those candidates, the user's request, weather/AQI context and recent conversation, then selects and explains one feasible option. The browser never receives the API key.</p><div class="ai-points"><span><b>01</b> OpenAI cloud reasoning</span><span><b>02</b> Server-validated candidate codes</span><span><b>03</b> Conversation context</span><span><b>04</b> Offline ML fallback</span></div><a class="btn dark" href="/ai">Open the AI Copilot →</a></div>
+  <div class="ai-demo-card"><div class="ai-demo-top"><span>GREENROUTE AI</span><b>{% if cloud_ai %}CLOUD CONNECTED{% else %}OFFLINE FALLBACK{% endif %}</b></div><div class="ai-chat-line user"><span>USER</span><p>“I'm late, keep it under ₹50 and low CO₂.”</p></div><div class="ai-chat-line bot"><span>AI</span><p><b>Understands:</b> time + budget + emissions</p><p><b>Then:</b> compares feasible candidates with live conditions and explains the trade-off.</p></div><div class="ai-score-row"><span>Cost</span><i style="width:76%"></i><b>data</b></div><div class="ai-score-row"><span>Time</span><i style="width:88%"></i><b>data</b></div><div class="ai-score-row"><span>CO₂</span><i style="width:93%"></i><b>data</b></div></div>
+</section>
+
+<section class="scenario" id="scenario">
+  <div class="section-heading"><div><div class="section-kicker">INTERACTIVE CAMPUS SCENARIO</div><h2>What if commuters switched?</h2></div><p>Use the seeded exhibition data to explain the scale of a simple intervention.</p></div>
+  <div class="scenario-grid">
+    <div class="scenario-control cardish"><label for="shift">Shift <strong id="shiftValue">20%</strong> of car trips to bus</label><input id="shift" type="range" min="0" max="50" value="20"><div class="range-labels"><span>0%</span><span>25%</span><span>50%</span></div><p>Illustrative scenario using existing demo data. It is a planning model, not a measured forecast.</p></div>
+    <div class="scenario-result cardish"><div><small>ESTIMATED EXTRA CO₂ AVOIDED</small><strong id="scenarioSaved">—</strong><span>kg across the seeded car trips</span></div><div class="scenario-arrow">→</div><div><small>WHY IT MATTERS</small><b>Repeated corridors become candidates for shuttle, bus or carpool interventions.</b></div></div>
+  </div>
+</section>
+
+<section class="metrics-section">
+  <div class="metric-intro"><div class="section-kicker">WHAT GREENROUTE MEASURES</div><h2>One commute. Multiple outcomes.</h2><p>Instead of saying “green is better,” the platform exposes the numbers so users can make their own informed choice.</p></div>
+  <div class="metric-cards"><div><b>₹</b><strong>Cost</strong><span>Fare + distance estimate</span></div><div><b>CO₂</b><strong>Emissions</strong><span>Passenger-level approximate factor</span></div><div><b>⌁</b><strong>Time</strong><span>Mode speed + transfer allowance</span></div><div><b>♥</b><strong>Activity</strong><span>Calories for active modes</span></div><div><b>★</b><strong>Behavior</strong><span>Points, streaks and adoption</span></div><div><b>⌂</b><strong>Campus</strong><span>Routes, departments and peaks</span></div></div>
+</section>
+
+<section class="tech-section">
+  <div class="section-heading"><div><div class="section-kicker">TECHNICAL DEPTH</div><h2>Built like a product, not a slide deck.</h2></div><p>Each external dependency has a fallback path so the core demo remains usable.</p></div>
+  <div class="tech-grid"><div><b>01</b><strong>Flask + SQLite</strong><span>Sessions, roles, foreign keys, indexes and seeded demo data.</span></div><div><b>02</b><strong>OSRM + fallback</strong><span>Road geometry when available; Haversine fallback keeps the planner alive.</span></div><div><b>03</b><strong>Open-Meteo + fallback</strong><span>Weather/AQI context with safe defaults.</span></div><div><b>04</b><strong>AI + ML</strong><span>Cloud natural-language reasoning plus local intent/recommender fallbacks.</span></div><div><b>05</b><strong>PWA shell</strong><span>Installable responsive interface with dark mode.</span></div><div><b>06</b><strong>Security</strong><span>Hashed passwords, CSRF, validation and rate limiting.</span></div></div>
+</section>
+
+<section class="weather-panel professional-weather"><div><div class="section-kicker">LIVE LUCKNOW CONTEXT</div><h2>{{weather.temp}}°C · AQI {{weather.aqi}}</h2><p>{{weather.label}} · rain {{weather.rain}} mm · wind {{weather.wind}} km/h</p></div><div class="weather-advice"><b>{{ 'Rain-aware recommendations active' if weather.rain > 2 else 'Current active-travel context available' }}</b><small>Weather/AQI can change which options are practically suitable.</small></div></section>
+
+<section class="cta-final"><div><div class="section-kicker">EXHIBITION FLOW</div><h2>Plan → ask the AI → log the trip → show the impact.</h2><p>The complete story fits into one clean live demo.</p></div><div class="actions"><a class="btn primary xl" href="/demo">Launch demo</a><a class="btn soft xl" href="/assumptions">Read assumptions</a></div></section>
+{% endblock %}
+{% block scripts %}
+<script>
+const carTrips={{ home_stats.car_trips|tojson }}; const carCo2={{ home_stats.car_co2|tojson }}; const busCo2={{ home_stats.bus_co2|tojson }};
+const shift=document.querySelector('#shift'), shiftValue=document.querySelector('#shiftValue'), scenarioSaved=document.querySelector('#scenarioSaved');
+function updateScenario(){const pct=+shift.value; shiftValue.textContent=pct+'%'; const saved=Math.max(0,carTrips*(pct/100)*(carCo2-busCo2)); scenarioSaved.textContent=saved.toFixed(1)+' kg';}
+if(shift){shift.addEventListener('input',updateScenario);updateScenario();}
+</script>
+{% endblock %}

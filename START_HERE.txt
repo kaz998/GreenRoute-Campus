@@ -1,0 +1,49 @@
+GREENROUTE CAMPUS — FINAL BUILD
+
+WINDOWS
+1) Double-click run.bat
+2) Open http://localhost:5000
+3) Click Launch demo for the seeded student account
+4) For cloud AI: close the app, run setup_ai.bat, enter your own API key, then run run.bat again.
+
+LINUX / macOS
+1) Run: chmod +x install_linux.sh run.sh
+2) Run: ./install_linux.sh
+3) Run: ./run.sh
+4) Open http://localhost:5000
+5) For cloud AI: run `python3 setup_ai.py`, enter your own API key, then restart ./run.sh.
+
+Demo student: student@greenroute.local / demo123
+Demo admin:   admin@greenroute.local / demo123
+
+The API key stays in your local .env file and is never sent to the browser.
+Do not put the API key in screenshots, source control, README files, or chat.
+
+If you run the launcher again later, your existing database is preserved.
+Use reset_demo.bat only when you deliberately want to rebuild the demo data.
+
+MAIN PRESENTATION FLOW
+Landing → Plan → Compare → Ask AI → Log trip → Impact → Admin
+
+PROJECT PRESENTATION + SDG 11
+-----------------------------
+The landing page explains the project's primary SDG alignment:
+SDG 11 — Sustainable Cities and Communities.
+
+A complete presentation PDF is included at:
+static/GreenRoute_Campus_Presentation.pdf
+
+The landing page also includes a QR code for the presentation. The bundled QR uses
+http://localhost:5000/static/GreenRoute_Campus_Presentation.pdf, so it works when
+opened on the same machine. For phone scanning over Wi-Fi, replace the QR with the
+computer's LAN URL if needed.
+
+UN SDG branding note:
+The SDG 11 icon follows the United Nations SDG icon specification. The project is
+not endorsed or approved by the United Nations. The UN emblem is not used.
+
+GITHUB
+------
+The project is prepared for GitHub with a README, MIT license, CI workflow, issue
+templates, pull-request template, contribution/security guidance, and Linux/macOS
+startup scripts. See GITHUB_SETUP.md for the publishing checklist.

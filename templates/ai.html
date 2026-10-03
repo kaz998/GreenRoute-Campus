@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagehead ai-head">
+  <div><div class="eyebrow">REAL AI · SERVER-SIDE API · DATA-AWARE</div><h1>Meet the GreenRoute AI Copilot.</h1><p>Write the goal in normal language. When cloud AI is configured, GreenRoute sends the request to a real OpenAI model together with server-computed transport candidates, distance and live conditions. The model chooses a feasible candidate; GreenRoute keeps the numeric metrics authoritative.</p></div>
+  <div class="ai-badge"><span>✦</span><div><b id="aiStatusText">{% if cloud_ai %}Cloud AI connected{% else %}Offline AI fallback{% endif %}</b><small id="aiStatusSub">{% if cloud_ai %}OpenAI · {{ ai_model }}{% else %}Configure OPENAI_API_KEY on the server to enable cloud reasoning{% endif %}</small></div></div>
+</div>
+
+<div class="ai-layout">
+  <section class="card ai-chat">
+    <div class="chat-top"><div><span class="live-dot"></span><b>GreenRoute AI</b><small>Mobility Copilot · remembers recent prompts in this browser only</small></div><span class="live-pill">{% if cloud_ai %}CLOUD READY{% else %}LOCAL FALLBACK{% endif %}</span></div>
+    <div class="ai-bubble"><div class="bot-avatar">✦</div><div><b>Tell me what matters for this commute.</b><p>Try “cheapest under ₹40”, “I’m late”, “take the metro if possible”, “lowest CO₂”, or a mixed request such as “under ₹50, under 35 minutes, but avoid cycling”.</p></div></div>
+    <div class="prompt-row"><button class="chip prompt" type="button">Cheapest under ₹40</button><button class="chip prompt" type="button">Fastest possible</button><button class="chip prompt" type="button">Lowest CO₂</button><button class="chip prompt" type="button">I want exercise</button><button class="chip prompt" type="button">Take the metro</button></div>
+    <label>Your commute request<textarea id="aiMessage" rows="4" maxlength="1600" placeholder="Example: I have ₹50 and need to reach campus in under 35 minutes with low emissions."></textarea></label>
+    <div class="ai-input-row"><label>Distance<input id="aiDistance" type="number" min="0.5" max="100" step="0.5" value="5"></label><label>Departure hour<input id="aiHour" type="number" min="0" max="23" value="8"></label><button id="askAI" class="btn primary ai-ask" type="button">Ask AI <span>→</span></button></div>
+    <div class="ai-toolbar"><button id="clearHistory" class="chip copy-btn" type="button">Clear local chat</button><span class="ai-mini">Only the last few prompts are sent as conversation context.</span></div>
+    <div id="aiLoading" class="ai-loading hidden">AI is evaluating your constraints <span class="spinner"></span></div>
+    <div id="aiResult" class="hidden"></div>
+  </section>
+
+  <aside class="ai-side">
+    <div class="card"><div class="eyebrow">HOW IT WORKS</div><div class="ai-step"><b>01</b><span>Understand</span><small>The cloud model interprets your natural-language goal and recent context.</small></div><div class="ai-step"><b>02</b><span>Constrain</span><small>GreenRoute calculates feasible modes using one shared server-side formula.</small></div><div class="ai-step"><b>03</b><span>Choose</span><small>The model returns exactly one candidate code; the server validates it.</small></div><div class="ai-step"><b>04</b><span>Explain</span><small>You get a short explanation, current numbers and practical tips.</small></div></div>
+    <div class="card"><div class="eyebrow">LIVE CONTEXT</div><h2>{{weather.label}}</h2><div class="grid two"><div class="stat"><b>{{weather.temp}}°C</b><small>Temperature</small></div><div class="stat"><b>{{weather.aqi}}</b><small>AQI</small></div><div class="stat"><b>{{weather.rain}} mm</b><small>Rain</small></div><div class="stat"><b>{{weather.wind}}</b><small>Wind</small></div></div><p class="note">The AI sees this context too. Outdoor active travel can be treated differently when rain, heat or AQI is high.</p></div>
+    <div class="card"><div class="eyebrow">RECENT LOCAL CHAT</div><div id="historyList" class="ai-history"><div class="empty">Your recent AI prompts will appear here.</div></div></div>
+  </aside>
+</div>
+
+<div class="card ai-exhibit"><div><div class="eyebrow">EXHIBITION TALKING POINT</div><h2>Why is this actually AI?</h2><p>GreenRoute does not fake intelligence with a long chain of hardcoded if/else responses. The primary path sends the request and the current candidate table to a cloud model. The project still has an offline ML fallback, and the server validates the model's selected candidate before showing final numbers.</p></div><div class="ai-pillars"><span>OpenAI cloud reasoning</span><span>Validated candidate code</span><span>Shared transport math</span><span>Browser-local history</span><span>Offline fallback</span></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+const csrf=()=>document.querySelector('meta[name=csrf-token]').content;
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const msg=document.querySelector('#aiMessage');
+const historyKey='greenroute_ai_history_v2';
+let history=[];
+try{history=JSON.parse(localStorage.getItem(historyKey)||'[]')}catch(_){history=[]}
+const saveHistory=()=>localStorage.setItem(historyKey,JSON.stringify(history.slice(-10)));
+const renderHistory=()=>{const el=document.querySelector('#historyList'); if(!history.length){el.innerHTML='<div class="empty">Your recent AI prompts will appear here.</div>';return;} el.innerHTML=history.slice().reverse().map((x,i)=>`<button class="ai-history-item" type="button" data-i="${i}"><b>${esc(x.message)}</b><span>${esc(x.result||'Waiting for AI')}</span></button>`).join('');el.querySelectorAll('button').forEach(b=>b.onclick=()=>{const x=history.slice().reverse()[+b.dataset.i];msg.value=x.message;document.querySelector('#aiDistance').value=x.distance_km||5;document.querySelector('#aiHour').value=x.time_hour??8;msg.focus()})};
+renderHistory();
+
+document.querySelectorAll('.prompt').forEach(b=>b.onclick=()=>{msg.value=b.textContent.trim();msg.focus()});
+document.querySelector('#clearHistory').onclick=()=>{history=[];saveHistory();renderHistory();window.showToast?.('Local AI history cleared.','success')};
+
+const context=(()=>{try{return JSON.parse(localStorage.getItem('greenroute_ai_context')||'null')}catch(_){return null}})();
+if(context){msg.value=context.message||msg.value;document.querySelector('#aiDistance').value=context.distance_km||5;document.querySelector('#aiHour').value=context.time_hour??new Date().getHours();localStorage.removeItem('greenroute_ai_context');}
+
+async function refreshStatus(){try{const r=await fetch('/api/ai-status');const d=await r.json();if(!r.ok)return;document.querySelector('#aiStatusText').textContent=d.cloud_configured?'Cloud AI connected':'Offline AI fallback';document.querySelector('#aiStatusSub').textContent=d.cloud_configured?`OpenAI · ${d.model}`:'Configure OPENAI_API_KEY on the server';}catch(_){} }
+refreshStatus();
+
+const loading=document.querySelector('#aiLoading'),out=document.querySelector('#aiResult');
+document.querySelector('#askAI').onclick=async()=>{
+  const message=msg.value.trim(); if(!message){msg.focus();return}
+  const distance=+document.querySelector('#aiDistance').value; const time_hour=+document.querySelector('#aiHour').value;
+  loading.classList.remove('hidden');out.classList.add('hidden');document.querySelector('#askAI').disabled=true;
+  try{
+    const r=await fetch('/api/ai-advice',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf()},body:JSON.stringify({message,distance_km:distance,time_hour,history})});
+    const d=await r.json();if(!r.ok)throw Error(d.error||'AI request failed');
+    const tips=(d.tips||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+    const provider=d.cloud_ai?`Real cloud AI · ${esc(d.model)}`:'Offline fallback';
+    out.innerHTML=`<div class="ai-answer"><div class="answer-head"><div class="bot-avatar">✦</div><div><span class="eyebrow">AI RECOMMENDATION · ${provider}</span><h2>${esc(d.name)}</h2><span class="ai-confidence">Model confidence: ${esc(d.confidence)}% · interpreted priority: ${esc(d.intent)}</span></div></div><p>${esc(d.reason)}</p><div class="decision-grid"><div class="decision-card"><span>TIME</span><strong>${esc(d.time)} min</strong></div><div class="decision-card"><span>COST</span><strong>₹${esc(d.cost)}</strong></div><div class="decision-card"><span>CO₂</span><strong>${esc(d.co2)} kg</strong></div><div class="decision-card"><span>ACTIVE</span><strong>${esc(d.calories)} cal</strong></div></div><div class="parsed"><b>AI understood:</b> ${esc(d.parsed.priority)} priority${d.parsed.budget?` · budget ₹${esc(d.parsed.budget)}`:''}${d.parsed.max_minutes?` · under ${esc(d.parsed.max_minutes)} min`:''}${d.parsed.explicit_mode?` · explicit mode: ${esc(d.parsed.explicit_mode)}`:''}</div>${tips?`<div class="parsed"><b>Practical tips</b><ul>${tips}</ul></div>`:''}<div class="ai-toolbar"><button class="btn soft copy-btn" id="copyAI" type="button">Copy result</button></div><h3>Other feasible candidates</h3><div class="ai-alts">${(d.alternatives||[]).map(x=>`<div><b>${esc(x.name)}</b><span>Server-computed alternative</span><small>${esc(x.time)} min · ₹${esc(x.cost)} · ${esc(x.co2)} kg CO₂</small></div>`).join('')}</div>${d.cloud_error?`<div class="flash error">${esc(d.cloud_error)}</div>`:''}</div>`;
+    const historyItem={role:'user',message,distance_km:distance,time_hour,result:`${d.name} · ${d.time} min · ₹${d.cost} · ${d.co2} kg CO₂`};
+    history.push(historyItem);history=history.slice(-10);saveHistory();renderHistory();
+    document.querySelector('#copyAI').onclick=async()=>{const text=`GreenRoute AI: ${d.name}\n${d.reason}\nTime: ${d.time} min | Cost: ₹${d.cost} | CO₂: ${d.co2} kg | Active: ${d.calories} cal`;try{await navigator.clipboard.writeText(text);window.showToast?.('AI result copied.','success')}catch(_){window.showToast?.('Copy is not available in this browser.','error')}};
+    out.classList.remove('hidden');out.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){out.innerHTML=`<div class="flash error">${esc(e.message)}</div>`;out.classList.remove('hidden');}
+  finally{loading.classList.add('hidden');document.querySelector('#askAI').disabled=false}
+};
+</script>
+{% endblock %}

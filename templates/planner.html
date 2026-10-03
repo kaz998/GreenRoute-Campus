@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="planner-head pagehead">
+  <div>
+    <div class="eyebrow"><span class="live-dot"></span> SMART TRIP PLANNER</div>
+    <h1>Turn a commute into a decision.</h1>
+    <p>Set two points. GreenRoute gets a road route, checks live conditions, compares the available modes and lets the AI explain the trade-off.</p>
+  </div>
+  <div class="condition-pill"><span class="live-dot"></span> {{weather.temp}}°C · AQI {{weather.aqi}} · {{weather.source}}</div>
+</div>
+
+<section class="planner-shell">
+  <aside class="planner-panel">
+    <div class="step"><span>01</span><div><b>Set your route</b><small>Search a place or tap the map twice</small></div></div>
+    <label>Origin<input id="origin" autocomplete="off" placeholder="e.g. Gomti Nagar, Lucknow"></label>
+    <button class="btn secondary full" id="geoO" type="button">Locate origin</button>
+    <label>Destination<input id="dest" autocomplete="off" placeholder="BBDNITM, Lucknow"></label>
+    <button class="btn secondary full" id="geoD" type="button">Locate destination</button>
+    <div class="quick"><button class="chip" data-place="BBDNITM, Lucknow" type="button">BBDNITM</button><button class="chip" data-place="Hazratganj, Lucknow" type="button">Hazratganj</button><button class="chip" data-place="Gomti Nagar, Lucknow" type="button">Gomti Nagar</button><button class="chip" data-place="Charbagh, Lucknow" type="button">Charbagh</button></div>
+    <div class="map-help"><b>Map mode:</b> first tap = origin · second tap = destination. Use Reset route to start over.</div>
+    <button class="btn primary full xl" id="compare" type="button">Compare all modes <span>→</span></button>
+    <button class="btn ghost full" id="resetRoute" type="button">Reset route</button>
+    <div id="routeMeta" class="route-meta" aria-live="polite"></div>
+  </aside>
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="map-overlay"><b>LIVE ROUTE MAP</b><span>OpenStreetMap · OSRM when available</span></div>
+  </div>
+</section>
+
+<section id="resultSection" class="result-section hidden">
+  <div class="result-head">
+    <div><div class="eyebrow">YOUR OPTIONS</div><h2>See the commute from four angles.</h2><p id="resultSummary"></p></div>
+    <div class="result-actions">
+      <select id="sort" aria-label="Sort transport options">
+        <option value="green_score">Lowest-impact index</option><option value="time">Fastest</option><option value="cost">Cheapest</option><option value="calories">Most active</option>
+      </select>
+      <button id="askRouteAI" class="btn dark" type="button">Ask AI about this route ✦</button>
+    </div>
+  </div>
+  <div class="recommendation-banner" id="recommendation"></div>
+  <div id="results" class="mode-grid"></div>
+  <div class="decision-grid">
+    <div class="decision-card"><span>CO₂ avoided</span><strong id="bestSaved">—</strong><small>vs the car baseline</small></div>
+    <div class="decision-card"><span>Money saved</span><strong id="bestMoney">—</strong><small>vs the car baseline</small></div>
+    <div class="decision-card"><span>Active calories</span><strong id="bestCalories">—</strong><small>for the currently highlighted mode</small></div>
+    <div class="decision-card"><span>Campus effect</span><strong id="bestImpact">—</strong><small>illustrative: 100 similar trips</small></div>
+  </div>
+  <div class="planner-disclaimer"><b>How to read this:</b> transport factors are educational estimates stored in the database; they are not official carbon accounting values. The AI uses these candidates but GreenRoute keeps the numeric calculations on the server.</div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>window.GRWEATHER={{weather|tojson}};</script>
+<script src="/static/js/planner.js"></script>
+{% endblock %}

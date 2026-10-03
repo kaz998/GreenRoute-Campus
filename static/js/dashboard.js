@@ -1,0 +1,1 @@
+fetch('/api/dashboard').then(r=>r.json()).then(d=>{new Chart(document.querySelector('#daily'),{type:'line',data:{labels:d.daily.map(x=>x.day),datasets:[{label:'kg saved',data:d.daily.map(x=>x.saved),tension:.3}]},options:{responsive:true}});new Chart(document.querySelector('#split'),{type:'doughnut',data:{labels:d.split.map(x=>x.name),datasets:[{data:d.split.map(x=>x.n)}]}})});
