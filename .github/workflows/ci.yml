@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -34,4 +35,4 @@ jobs:
             setup_ai.py
 
       - name: Run tests
-        run: pytest -q
+        run: python -m pytest -q
